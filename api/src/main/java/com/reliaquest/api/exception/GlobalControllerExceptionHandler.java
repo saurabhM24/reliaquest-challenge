@@ -40,6 +40,14 @@ public class GlobalControllerExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiError);
     }
 
+    @ExceptionHandler(TooManyRequestsException.class)
+    public ResponseEntity<APIError> handleTooManyRequestsException(TooManyRequestsException ex) {
+        APIError apiError = new APIError();
+        apiError.setError(ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(apiError);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<APIError> handleException(Exception ex) {
         APIError apiError = new APIError();
