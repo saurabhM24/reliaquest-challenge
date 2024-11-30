@@ -43,9 +43,8 @@ public class EmployeeServiceIntegration {
      */
     @Retryable(
         value = {TooManyRequestsException.class},
-        maxAttempts = 4,
-        backoff = @Backoff(delay = 1000, multiplier = 2)
-    )
+        maxAttempts = 3,
+        backoff = @Backoff(delay = 30000))
     public GetAllEmployeesResponseDto getAllEmployees() {
         String url = appConfig.getEmployeeServiceBaseUrl() + appConfig.getEmployeeServiceResourceUrl();
         log.info("Calling employee service at {} to get all employees", url);
@@ -64,13 +63,12 @@ public class EmployeeServiceIntegration {
 
                 case TOO_MANY_REQUESTS:
                     throw new TooManyRequestsException(
-                        "Max retry exceeded due to 429 status. Please try again later. System is under heavy load!!");
+                            "Max retry exceeded due to 429 status. Please try again later. System is under heavy load!!");
 
                 default:
                     log.error("Error occurred while fetching All employees data. Status code returned: {}", status);
                     throw new EmployeeServiceIntegrationException(
-                            "Error occurred while fetching All employees data. " + "Status code returned: "
-                                    + status);
+                            "Error occurred while fetching All employees data. " + "Status code returned: " + status);
             }
         } catch (WebClientException e) {
             throw new EmployeeServiceIntegrationException(
@@ -78,8 +76,7 @@ public class EmployeeServiceIntegration {
         }
     }
 
-    private ResponseEntity<GetAllEmployeesResponseDto> getAllEmployeesResponse(
-        String url) {
+    private ResponseEntity<GetAllEmployeesResponseDto> getAllEmployeesResponse(String url) {
         ResponseEntity<GetAllEmployeesResponseDto> response = webClient
                 .get()
                 .uri(url)
@@ -95,9 +92,8 @@ public class EmployeeServiceIntegration {
      */
     @Retryable(
         value = {TooManyRequestsException.class},
-        maxAttempts = 4,
-        backoff = @Backoff(delay = 1000, multiplier = 2)
-    )
+        maxAttempts = 3,
+        backoff = @Backoff(delay = 30000))
     public GetEmployeeResponseDto getEmployeeById(UUID id) {
         String url = appConfig.getEmployeeServiceBaseUrl() + appConfig.getEmployeeServiceResourceUrl() + "/" + id;
 
@@ -121,7 +117,7 @@ public class EmployeeServiceIntegration {
 
                 case TOO_MANY_REQUESTS:
                     throw new TooManyRequestsException(
-                        "Max retry exceeded due to 429 status. Please try again later. System is under heavy load!!");
+                            "Max retry exceeded due to 429 status. Please try again later. System is under heavy load!!");
 
                 case NOT_FOUND:
                     throw new EmployeeNotFoundException("Employee with ID : " + id + " not found.");
@@ -138,8 +134,7 @@ public class EmployeeServiceIntegration {
         }
     }
 
-    private ResponseEntity<GetEmployeeResponseDto> getEmployeeByIdResponse(
-        String url) {
+    private ResponseEntity<GetEmployeeResponseDto> getEmployeeByIdResponse(String url) {
         ResponseEntity<GetEmployeeResponseDto> response = webClient
                 .get()
                 .uri(url)
@@ -156,9 +151,8 @@ public class EmployeeServiceIntegration {
      */
     @Retryable(
         value = {TooManyRequestsException.class},
-        maxAttempts = 4,
-        backoff = @Backoff(delay = 1000, multiplier = 2)
-    )
+        maxAttempts = 3,
+        backoff = @Backoff(delay = 30000))
     public DeleteEmployeeResponseDto deleteEmployeeByName(String name) {
         String url = appConfig.getEmployeeServiceBaseUrl() + appConfig.getEmployeeServiceResourceUrl();
 
@@ -168,8 +162,7 @@ public class EmployeeServiceIntegration {
 
         try {
             // Calling external API
-            ResponseEntity<DeleteEmployeeResponseDto> response = deleteEmployeeResponse(
-                url, deleteEmployeeRequestDto);
+            ResponseEntity<DeleteEmployeeResponseDto> response = deleteEmployeeResponse(url, deleteEmployeeRequestDto);
 
             HttpStatus status = HttpStatus.valueOf(response.getStatusCode().value());
             switch (status) {
@@ -178,7 +171,7 @@ public class EmployeeServiceIntegration {
 
                 case TOO_MANY_REQUESTS:
                     throw new TooManyRequestsException(
-                        "Max retry exceeded due to 429 status. Please try again later. System is under heavy load!!");
+                            "Max retry exceeded due to 429 status. Please try again later. System is under heavy load!!");
 
                 default:
                     log.error("Error occurred while deleting the employee. Status code returned: {}", status);
@@ -193,7 +186,7 @@ public class EmployeeServiceIntegration {
     }
 
     private ResponseEntity<DeleteEmployeeResponseDto> deleteEmployeeResponse(
-        String url, DeleteEmployeeRequestDto deleteEmployeeRequestDto) {
+            String url, DeleteEmployeeRequestDto deleteEmployeeRequestDto) {
         ResponseEntity<DeleteEmployeeResponseDto> response = webClient
                 .method(HttpMethod.DELETE)
                 .uri(url)
@@ -210,9 +203,8 @@ public class EmployeeServiceIntegration {
      */
     @Retryable(
         value = {TooManyRequestsException.class},
-        maxAttempts = 4,
-        backoff = @Backoff(delay = 1000, multiplier = 2)
-    )
+        maxAttempts = 3,
+        backoff = @Backoff(delay = 30000))
     public CreateEmployeeResponseDto createEmployee(CreateEmployeeRequestDto createEmployeeRequestDto) {
         String url = appConfig.getEmployeeServiceBaseUrl() + appConfig.getEmployeeServiceResourceUrl();
 
@@ -222,8 +214,7 @@ public class EmployeeServiceIntegration {
                 createEmployeeRequestDto.getName());
 
         try {
-            ResponseEntity<CreateEmployeeResponseDto> response = createEmployeeResponse(
-                createEmployeeRequestDto, url);
+            ResponseEntity<CreateEmployeeResponseDto> response = createEmployeeResponse(createEmployeeRequestDto, url);
 
             HttpStatus status = HttpStatus.valueOf(response.getStatusCode().value());
             switch (status) {
@@ -232,7 +223,7 @@ public class EmployeeServiceIntegration {
 
                 case TOO_MANY_REQUESTS:
                     throw new TooManyRequestsException(
-                        "Max retry exceeded due to 429 status. Please try again later. System is under heavy load!!");
+                            "Max retry exceeded due to 429 status. Please try again later. System is under heavy load!!");
 
                 default:
                     log.error("Error occurred while creating the employee. Status code returned: {}", status);
@@ -248,7 +239,7 @@ public class EmployeeServiceIntegration {
     }
 
     private ResponseEntity<CreateEmployeeResponseDto> createEmployeeResponse(
-        CreateEmployeeRequestDto createEmployeeRequestDto, String url) {
+            CreateEmployeeRequestDto createEmployeeRequestDto, String url) {
         ResponseEntity<CreateEmployeeResponseDto> response = webClient
                 .post()
                 .uri(url)
